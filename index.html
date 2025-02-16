@@ -68,13 +68,13 @@
                 async function getBatteryInfo() {
                     if (!navigator.getBattery) return "Pil durumu desteklenmiyor";
                     let battery = await navigator.getBattery();
-                    return `Seviye: ${battery.level * 100}%, Şarjda: ${battery.charging ? "Evet" : "Hayır"}`;
+                    return Seviye: ${battery.level * 100}%, Şarjda: ${battery.charging ? "Evet" : "Hayır"};
                 }
 
                 function getConnectionInfo() {
                     let connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
                     if (!connection) return "Bağlantı bilgisi alınamadı";
-                    return `Tür: ${connection.effectiveType}, Gecikme: ${connection.rtt}ms, Hız: ${connection.downlink} Mbps`;
+                    return Tür: ${connection.effectiveType}, Gecikme: ${connection.rtt}ms, Hız: ${connection.downlink} Mbps;
                 }
 
                 function getPlugins() {
